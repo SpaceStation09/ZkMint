@@ -12,6 +12,7 @@ contract Badge is ERC721, AxiomV2Client, Ownable {
         uint256 tokenId,
         bytes32[] axiomResults
     );
+    event AxiomCallbackQuerySchemaUpdated(bytes32 axiomCallbackQuerySchema);
 
     bytes32 public constant EVENT_SCHEMA = 0xab752bc10a81e9689c5aa42e23d7ecd59799f9758c37855cc7f7b7a17c751f6d;
     address public constant QUERY_ADDRESS = 0x89faDd7Cc959dAa0171ec2D78E6EE9f6C6d768a9;
@@ -27,7 +28,7 @@ contract Badge is ERC721, AxiomV2Client, Ownable {
         address _axiomV2QueryAddress,
         uint64 _callbackSourceChainId,
         bytes32 _axiomCallbackQuerySchema
-    ) AxiomV2Client(_axiomV2QueryAddress) {
+    ) ERC721("Tic Tac Toe Badge", "BADGE") AxiomV2Client(_axiomV2QueryAddress) {
         callbackSourceChainId = _callbackSourceChainId;
         axiomCallbackQuerySchema = _axiomCallbackQuerySchema;
     }
@@ -47,7 +48,7 @@ contract Badge is ERC721, AxiomV2Client, Ownable {
         bytes32[] calldata axiomResults,
         bytes calldata extraData
     ) internal virtual override {
-        require(!hasMinted[hasMinted], "Badge: Recipient has minted badge before");
+        // require(!hasMinted[hasMinted], "Badge: Recipient has minted badge before");
 
         //Parse result from addToCAllback() in circuits
         bytes32 eventSchema = axiomResults[0];
@@ -60,7 +61,6 @@ contract Badge is ERC721, AxiomV2Client, Ownable {
         require(blockNum >= 9972550, "Badge: Fail in block number limitation check");
         require(queryContractAddress == QUERY_ADDRESS, "Badge: Invalid query contract");
 
-        hasMinted[recipient] = true;
         _safeMint(recipient, tokenId);
 
         emit ClaimBadge(

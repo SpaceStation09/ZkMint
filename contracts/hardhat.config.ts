@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-
+import "hardhat-deploy";
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
@@ -16,6 +16,11 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
       chainId: 5,
+    },
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
     },
   },
   mocha: {
